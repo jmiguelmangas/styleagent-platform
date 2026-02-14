@@ -1,0 +1,9 @@
+[submodule "backend"]
+	path = backend
+	url = git@github.com:jmiguelmangas/styleagent-backend.git
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:jmiguelmangas/styleagent-frontend.git
+[submodule "runner"]
+	path = runner
+	url = git@github.com:jmiguelmangas/styleagent-runner.git
