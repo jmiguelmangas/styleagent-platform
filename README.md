@@ -1,13 +1,29 @@
-# styleagent-platform
+# StyleAgent Platform
 
-Monorepo root for StyleAgent submodules.
+Monorepo root for StyleAgent services and submodules.
 
-## Services
+## Repository Structure
 
-- `backend` (FastAPI): served on `http://localhost:8000`
-- `frontend` (React + Nginx): served on `http://localhost:5173`
+- `backend/` — FastAPI API (`http://localhost:8000`)
+- `frontend/` — React app (`http://localhost:5173`)
+- `runner/` — Python runner CLI (`styleagent-runner`)
+- `docker-compose.yml` — local orchestration for backend + frontend
 
-## Run Backend + Frontend With Docker Compose
+## Submodules
+
+Initialize/update submodules from root:
+
+```bash
+git submodule update --init --recursive
+```
+
+Sync submodules to remote main branches:
+
+```bash
+git submodule update --remote --merge
+```
+
+## Run Backend + Frontend (Docker Compose)
 
 From repository root:
 
@@ -15,7 +31,7 @@ From repository root:
 docker compose up --build
 ```
 
-Optional env overrides (example):
+Optional frontend env overrides:
 
 ```bash
 FRONTEND_API_BASE_URL=http://localhost:8000 \
@@ -24,8 +40,26 @@ FRONTEND_APP_BASE_PATH=/ \
   docker compose up --build
 ```
 
-## Stop
+Stop services:
 
 ```bash
 docker compose down
+```
+
+## Runner (Local CLI)
+
+Runner is currently executed directly from the `runner` submodule:
+
+```bash
+cd runner
+pip install -e .[dev]
+styleagent-runner --help
+```
+
+Common commands:
+
+```bash
+styleagent-runner poll
+styleagent-runner poll --once
+styleagent-runner run --job-id <job_id>
 ```
