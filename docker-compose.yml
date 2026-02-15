@@ -16,3 +16,17 @@ services:
       - "5173:80"
     depends_on:
       - backend
+
+  runner:
+    build:
+      context: ./runner
+    command: ["styleagent-runner", "poll"]
+    environment:
+      RUNNER_API_BASE_URL: ${RUNNER_API_BASE_URL:-http://backend:8000}
+      RUNNER_POLL_INTERVAL: ${RUNNER_POLL_INTERVAL:-5}
+      RUNNER_API_KEY: ${RUNNER_API_KEY:-}
+      RUNNER_HTTP_TIMEOUT_SECONDS: ${RUNNER_HTTP_TIMEOUT_SECONDS:-10}
+      RUNNER_HTTP_RETRIES: ${RUNNER_HTTP_RETRIES:-2}
+    depends_on:
+      - backend
+    restart: unless-stopped
