@@ -61,6 +61,20 @@ Stop services:
 docker compose down
 ```
 
+## Integration Smoke Test
+
+Run a full stack integration smoke test (mongodb + backend + frontend + runner):
+
+```bash
+./scripts/integration_smoke.sh
+```
+
+What it validates:
+- backend and frontend are reachable
+- create style and version via backend API
+- compile Capture One artifact and download it
+- runner jobs endpoint is reachable
+
 ## Runner (Local CLI)
 
 Runner is currently executed directly from the `runner` submodule:
