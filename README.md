@@ -7,7 +7,7 @@ Monorepo root for StyleAgent services and submodules.
 - `backend/` — FastAPI API (`http://localhost:8000`)
 - `frontend/` — React app (`http://localhost:5173`)
 - `runner/` — Python runner CLI (`styleagent-runner`)
-- `docker-compose.yml` — local orchestration for backend + frontend
+- `docker-compose.yml` — local orchestration for backend + frontend + runner
 
 ## Submodules
 
@@ -23,7 +23,7 @@ Sync submodules to remote main branches:
 git submodule update --remote --merge
 ```
 
-## Run Backend + Frontend (Docker Compose)
+## Run Backend + Frontend + Runner (Docker Compose)
 
 From repository root:
 
@@ -37,6 +37,11 @@ Optional frontend env overrides:
 FRONTEND_API_BASE_URL=http://localhost:8000 \
 FRONTEND_API_TIMEOUT_MS=10000 \
 FRONTEND_APP_BASE_PATH=/ \
+RUNNER_API_BASE_URL=http://backend:8000 \
+RUNNER_POLL_INTERVAL=5 \
+RUNNER_API_KEY= \
+RUNNER_HTTP_TIMEOUT_SECONDS=10 \
+RUNNER_HTTP_RETRIES=2 \
   docker compose up --build
 ```
 
