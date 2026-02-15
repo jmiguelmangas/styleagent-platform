@@ -7,7 +7,7 @@ Monorepo root for StyleAgent services and submodules.
 - `backend/` — FastAPI API (`http://localhost:8000`)
 - `frontend/` — React app (`http://localhost:5173`)
 - `runner/` — Python runner CLI (`styleagent-runner`)
-- `docker-compose.yml` — local orchestration for backend + frontend + runner
+- `docker-compose.yml` — local orchestration for backend + frontend + runner + mongodb
 
 ## Submodules
 
@@ -43,6 +43,16 @@ RUNNER_API_KEY= \
 RUNNER_HTTP_TIMEOUT_SECONDS=10 \
 RUNNER_HTTP_RETRIES=2 \
   docker compose up --build
+```
+
+Mongo is included by default in compose:
+- `mongodb://localhost:27017` (host access)
+- backend internal URL default: `mongodb://mongodb:27017/styleagent`
+
+You can also copy the full env template:
+
+```bash
+cp .env.example .env
 ```
 
 Stop services:
