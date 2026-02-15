@@ -69,6 +69,8 @@ Run a full stack integration smoke test (mongodb + backend + frontend + runner):
 ./scripts/integration_smoke.sh
 ```
 
+This same smoke test runs in GitHub Actions on every pull request and push to `main`.
+
 What it validates:
 - backend and frontend are reachable
 - create style and version via backend API
