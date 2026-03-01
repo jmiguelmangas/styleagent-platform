@@ -100,6 +100,12 @@ Run the runner local-gated host integration pytest (with backend auto-start):
 ./scripts/integration_runner_host_local.sh
 ```
 
+## Operations Runbook
+
+Host-mode operations and troubleshooting guide:
+
+- `docs/runbook-host-mode.md`
+
 Optional env overrides:
 
 ```bash
