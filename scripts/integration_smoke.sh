@@ -44,6 +44,9 @@ wait_http_ok() {
 echo "Waiting for backend health..."
 wait_http_ok "http://localhost:8000/health" '"status":"ok"' 90
 
+echo "Waiting for backend storage readiness..."
+wait_http_ok "http://localhost:8000/styles" "[" 90
+
 echo "Waiting for frontend..."
 wait_http_ok "http://localhost:5173/" "<!doctype html" 90
 
