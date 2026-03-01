@@ -92,6 +92,25 @@ What it validates:
 - job reaches `succeeded`
 - imported `.costyle` file exists on local filesystem
 
+## Runner Host Integration Test (Local, One Command)
+
+Run the runner local-gated host integration pytest (with backend auto-start):
+
+```bash
+./scripts/integration_runner_host_local.sh
+```
+
+Optional env overrides:
+
+```bash
+RUNNER_API_BASE_URL=http://localhost:8000 \
+RUNNER_CAPTUREONE_APP_PATH="/Applications/Capture One.app" \
+RUNNER_CAPTUREONE_IMPORT_DIR="$HOME/.styleagent/captureone/imports" \
+RUNNER_CAPTUREONE_LAUNCH_MODE=auto \
+RUNNER_CAPTUREONE_CLI_COMMAND='captureone-cli import --style {costyle_path}' \
+./scripts/integration_runner_host_local.sh
+```
+
 ## Runner (Local CLI)
 
 Runner is currently executed directly from the `runner` submodule:
