@@ -41,8 +41,46 @@ wait_http_ok() {
   return 1
 }
 
+wait_http_up() {
+  local url="$1"
+  local max_tries="${2:-60}"
+  local try=1
+
+  while (( try <= max_tries )); do
+    if curl -fsS -o /dev/null "$url" 2>/dev/null; then
+      return 0
+    fi
+    sleep 2
+    ((try++))
+  done
+  echo "Timeout waiting for $url"
+  return 1
+}
+
+wait_mongodb_ready() {
+  local max_tries="${1:-60}"
+  local try=1
+
+  while (( try <= max_tries )); do
+    if docker compose -f "$COMPOSE_FILE" exec -T mongodb mongosh --quiet --eval "db.runCommand({ ping: 1 }).ok" \
+      >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 2
+    ((try++))
+  done
+  echo "Timeout waiting for mongodb readiness"
+  return 1
+}
+
+echo "Waiting for mongodb readiness..."
+wait_mongodb_ready 90
+
 echo "Waiting for backend health..."
 wait_http_ok "http://localhost:8000/health" '"status":"ok"' 90
+
+echo "Waiting for backend storage readiness..."
+wait_http_up "http://localhost:8000/styles" 90
 
 echo "Waiting for frontend..."
 wait_http_ok "http://localhost:5173/" "<!doctype html" 90
