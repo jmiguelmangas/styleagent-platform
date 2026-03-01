@@ -77,6 +77,21 @@ What it validates:
 - compile Capture One artifact and download it
 - runner jobs endpoint is reachable
 
+## Capture One Host E2E (Local)
+
+Run a local host-mode E2E check for Capture One integration:
+
+```bash
+./scripts/integration_captureone_host.sh
+```
+
+What it validates:
+- backend + mongodb are started
+- style/version/job can be created with `execution_mode=host`
+- local runner executes host-mode compile job
+- job reaches `succeeded`
+- imported `.costyle` file exists on local filesystem
+
 ## Runner (Local CLI)
 
 Runner is currently executed directly from the `runner` submodule:
