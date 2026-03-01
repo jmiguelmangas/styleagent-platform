@@ -9,6 +9,8 @@ Use this document when:
 - Capture One does not import `.costyle`
 - CI/local host checks are flaky
 
+If GitHub host workflow is not starting, see **GitHub Workflow Readiness** below.
+
 ## Fast Path
 
 1. Run backend + mongodb:
@@ -105,6 +107,31 @@ docker compose logs backend | rg "job_"
 - `./scripts/integration_runner_host_local.sh` passes
 - host job ends in `succeeded`
 - `result.host_integration.imported_costyle_path` exists on disk
+
+## GitHub Workflow Readiness
+
+Workflow: `Host Integration (macOS)` (repository: `styleagent-runner`)
+
+Required runner labels:
+- `self-hosted`
+- `macOS`
+- `captureone`
+
+Quick status check:
+
+```bash
+gh api repos/jmiguelmangas/styleagent-runner/actions/runners \
+  --jq '.total_count, [.runners[] | {name, status, busy, labels: [.labels[].name]}]'
+```
+
+If `total_count` is `0`, host workflow jobs will remain in `queued`.
+
+Manual trigger:
+
+```bash
+gh workflow run "Host Integration (macOS)" -R jmiguelmangas/styleagent-runner --ref main
+gh run list -R jmiguelmangas/styleagent-runner --workflow "Host Integration (macOS)" --limit 5
+```
 
 ## Escalation Data to Attach
 
