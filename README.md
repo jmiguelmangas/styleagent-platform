@@ -134,3 +134,13 @@ styleagent-runner poll
 styleagent-runner poll --once
 styleagent-runner run --job-id <job_id>
 ```
+
+## Host Integration Docs
+
+- Discovery checklist: `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/docs/Host-Integration-Discovery.md`
+- Adapter contract: `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/docs/Runner-Host-Adapter-Contract.md`
+- Local host discovery command:
+
+```bash
+./scripts/discover_host_integrations.sh
+```
