@@ -170,6 +170,21 @@ Shortcut:
 make runner-host-local
 ```
 
+## AI Preset Benchmark
+
+Use the benchmark document to evaluate preset quality, intensity separation, and export fidelity:
+
+- `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/docs/AI-Preset-Benchmark.md`
+
+Recommended first pass:
+
+```bash
+make up
+make smoke-ollama
+```
+
+Then run manual comparisons in the UI or via `/ai/debug/prompt-preview` using the canon prompts from the benchmark.
+
 ## Operations Runbook
 
 Host-mode operations and troubleshooting guide:
