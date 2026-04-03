@@ -118,6 +118,26 @@ if [[ -z "$IMPORTED_PATH" || ! -f "$IMPORTED_PATH" ]]; then
   exit 1
 fi
 
+cat >"$ARTIFACTS_DIR/SUMMARY.md" <<EOF
+# Capture One Host E2E Summary
+
+- timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+- style_id: ${STYLE_ID}
+- job_id: ${JOB_ID}
+- final_status: ${FINAL_STATUS}
+- imported_costyle_path: ${IMPORTED_PATH}
+
+## Evidence
+
+- style create: \`api/style-create.json\`
+- style version create: \`api/style-version-create.json\`
+- job create: \`api/job-create.json\`
+- job status: \`api/job-status.json\`
+- compose logs: \`logs/docker-compose.log\`
+- compose ps: \`logs/docker-compose-ps.txt\`
+- imported path marker: \`imported-costyle-path.txt\`
+EOF
+
 echo "$IMPORTED_PATH" >"$ARTIFACTS_DIR/imported-costyle-path.txt"
 echo "Host E2E passed."
 echo "style_id=$STYLE_ID"
