@@ -50,7 +50,8 @@
 
 ## Medium-priority tasks
 1. Evaluation pipeline
-- Add benchmark prompts and offline evaluation scripts.
+- Benchmark baseline created in `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/docs/AI-Preset-Benchmark.md`.
+- Next step: add offline evaluation scripts and persist benchmark outputs under `.artifacts/benchmark/`.
 
 2. Prompt versioning
 - Store `prompt_version` in AI generation history.
