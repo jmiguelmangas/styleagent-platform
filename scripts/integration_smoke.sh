@@ -14,10 +14,18 @@ if ! command -v curl >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v npm >/dev/null 2>&1; then
+  echo "npm is required"
+  exit 1
+fi
+
 cleanup() {
   docker compose -f "$COMPOSE_FILE" down -v >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
+
+export STYLEAGENT_AI_PROVIDER="${STYLEAGENT_AI_PROVIDER:-mock}"
+export STYLEAGENT_AI_MODEL="${STYLEAGENT_AI_MODEL:-mock-v1}"
 
 echo "Starting integration stack..."
 docker compose -f "$COMPOSE_FILE" up -d --build mongodb backend frontend runner
@@ -84,6 +92,22 @@ wait_http_up "http://localhost:8000/styles" 90
 
 echo "Waiting for frontend..."
 wait_http_ok "http://localhost:5173/" "<!doctype html" 90
+
+echo "Waiting for AI health..."
+wait_http_ok "http://localhost:8000/ai/health" '"available":true' 90
+
+echo "Installing frontend Playwright dependencies if needed..."
+pushd "$ROOT_DIR/frontend" >/dev/null
+if [[ ! -d node_modules ]]; then
+  npm ci
+fi
+npx playwright install chromium >/dev/null
+
+echo "Running live-stack Playwright happy path..."
+PLAYWRIGHT_LIVE_STACK=1 \
+PLAYWRIGHT_BASE_URL="http://127.0.0.1:5173" \
+npm run test:e2e:live -- --project=chromium
+popd >/dev/null
 
 STYLE_NAME="Integration Smoke $(date +%s)"
 CREATE_STYLE_PAYLOAD="$(printf '{"name":"%s"}' "$STYLE_NAME")"
