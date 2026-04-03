@@ -1,6 +1,7 @@
 SHELL := /bin/bash
+COMPOSE_PROJECT := styleagent-platform
 
-.PHONY: help bootstrap up down restart ps logs backend-logs frontend-logs runner-logs smoke smoke-ollama host-e2e runner-host-local build
+.PHONY: help bootstrap up down restart ps logs backend-logs frontend-logs runner-logs smoke smoke-ollama host-e2e runner-host-local build wait-down
 
 help:
 	@echo "StyleAgent platform commands"
@@ -24,10 +25,12 @@ bootstrap:
 	./scripts/bootstrap.sh
 
 up:
+	$(MAKE) wait-down
 	docker compose up -d --build mongodb backend frontend runner
 
 down:
-	docker compose down
+	docker compose down --remove-orphans
+	$(MAKE) wait-down
 
 restart: down up
 
@@ -60,3 +63,13 @@ host-e2e:
 
 runner-host-local:
 	./scripts/integration_runner_host_local.sh
+
+wait-down:
+	@for i in {1..60}; do \
+		if [ -z "$$(docker ps -a --filter label=com.docker.compose.project=$(COMPOSE_PROJECT) -q)" ]; then \
+			exit 0; \
+		fi; \
+		sleep 1; \
+	done; \
+	echo "Timed out waiting for Compose resources to be removed"; \
+	exit 1
