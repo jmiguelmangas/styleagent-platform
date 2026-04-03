@@ -31,6 +31,15 @@ From repository root:
 docker compose up --build
 ```
 
+Recommended shortcuts:
+
+```bash
+make up
+make down
+make ps
+make logs
+```
+
 Optional frontend env overrides:
 
 ```bash
@@ -69,6 +78,12 @@ Run a full stack integration smoke test (mongodb + backend + frontend + runner):
 ./scripts/integration_smoke.sh
 ```
 
+Shortcut:
+
+```bash
+make smoke
+```
+
 This same smoke test runs in GitHub Actions on every pull request and push to `main`.
 
 What it validates:
@@ -94,6 +109,12 @@ Run a local host-mode E2E check for Capture One integration:
 ./scripts/integration_captureone_host.sh
 ```
 
+Shortcut:
+
+```bash
+make host-e2e
+```
+
 What it validates:
 - backend + mongodb are started
 - style/version/job can be created with `execution_mode=host`
@@ -110,6 +131,12 @@ Run the full smoke against your real local Ollama instance:
 
 ```bash
 ./scripts/integration_smoke_ollama.sh
+```
+
+Shortcut:
+
+```bash
+make smoke-ollama
 ```
 
 Optional overrides:
@@ -135,6 +162,12 @@ Run the runner local-gated host integration pytest (with backend auto-start):
 
 ```bash
 ./scripts/integration_runner_host_local.sh
+```
+
+Shortcut:
+
+```bash
+make runner-host-local
 ```
 
 ## Operations Runbook

@@ -58,13 +58,26 @@ STYLE_ID="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["style_id"])
 VERSION_PAYLOAD="$(cat <<EOF
 {
   "version": "v1",
+  "safe_policy": {
+    "remove_white_balance": false
+  },
   "style_spec": {
     "name": "$STYLE_NAME",
-    "intent": ["host", "captureone", "e2e"],
+    "intent": ["host", "captureone", "e2e", "cinematic", "portrait"],
     "captureone": {
       "keys": {
-        "Exposure": 0.25,
-        "Contrast": 8
+        "Exposure": 0.15,
+        "Contrast": 14,
+        "Saturation": 5,
+        "Clarity": 10,
+        "Highlights": -12,
+        "Shadows": 14,
+        "WhiteBalanceTemperature": 5900,
+        "WhiteBalanceTint": 3,
+        "ColorBalanceRed": 7,
+        "ColorBalanceGreen": 1,
+        "ColorBalanceBlue": -2,
+        "ToneCurve": "Film Standard"
       }
     }
   }
@@ -115,6 +128,11 @@ fi
 
 if [[ -z "$IMPORTED_PATH" || ! -f "$IMPORTED_PATH" ]]; then
   echo "Host E2E failed: imported file missing path=$IMPORTED_PATH"
+  exit 1
+fi
+
+if ! grep -q 'K="WhiteBalanceTemperature"' "$IMPORTED_PATH" || ! grep -q 'K="ToneCurve"' "$IMPORTED_PATH"; then
+  echo "Host E2E failed: imported .costyle is missing rich Capture One keys"
   exit 1
 fi
 

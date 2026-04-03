@@ -133,13 +133,26 @@ STYLE_ID="$(python3 -c 'import json,sys;print(json.load(sys.stdin)["style_id"])'
 VERSION_PAYLOAD="$(cat <<EOF
 {
   "version": "v1",
+  "safe_policy": {
+    "remove_white_balance": false
+  },
   "style_spec": {
     "name": "$STYLE_NAME",
-    "intent": ["integration", "smoke"],
+    "intent": ["integration", "smoke", "cinematic", "portrait"],
     "captureone": {
       "keys": {
-        "Exposure": 0.25,
-        "Contrast": 8
+        "Exposure": 0.15,
+        "Contrast": 14,
+        "Saturation": 5,
+        "Clarity": 10,
+        "Highlights": -12,
+        "Shadows": 14,
+        "WhiteBalanceTemperature": 5900,
+        "WhiteBalanceTint": 3,
+        "ColorBalanceRed": 7,
+        "ColorBalanceGreen": 1,
+        "ColorBalanceBlue": -2,
+        "ToneCurve": "Film Standard"
       }
     }
   }
@@ -163,6 +176,10 @@ fi
 ARTIFACT_CONTENT="$(curl -fsS "http://localhost:8000$DOWNLOAD_URL")"
 if [[ "$ARTIFACT_CONTENT" != *"<SL Engine="* ]]; then
   echo "Artifact payload is not a valid .costyle XML"
+  exit 1
+fi
+if [[ "$ARTIFACT_CONTENT" != *'K="WhiteBalanceTemperature"'* ]] || [[ "$ARTIFACT_CONTENT" != *'K="ToneCurve"'* ]]; then
+  echo "Artifact payload is missing rich Capture One keys"
   exit 1
 fi
 printf '%s' "$ARTIFACT_CONTENT" >"$DOWNLOADS_DIR/${STYLE_ID}-v1.costyle"
