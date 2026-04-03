@@ -106,7 +106,7 @@ npx playwright install chromium >/dev/null
 echo "Running live-stack Playwright happy path..."
 PLAYWRIGHT_LIVE_STACK=1 \
 PLAYWRIGHT_BASE_URL="http://127.0.0.1:5173" \
-npx playwright test e2e/live-stack.spec.ts --project=chromium
+npm run test:e2e:live -- --project=chromium
 popd >/dev/null
 
 STYLE_NAME="Integration Smoke $(date +%s)"
