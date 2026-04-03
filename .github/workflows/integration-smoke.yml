@@ -19,3 +19,11 @@ jobs:
 
       - name: Run docker compose integration smoke
         run: ./scripts/integration_smoke.sh
+
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-smoke-artifacts
+          path: .artifacts/integration-smoke
+          if-no-files-found: warn

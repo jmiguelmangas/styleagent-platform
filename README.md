@@ -84,6 +84,7 @@ What it validates:
 Notes:
 - the smoke test forces `STYLEAGENT_AI_PROVIDER=mock` so CI and local smoke runs stay deterministic
 - this is separate from manual/local Ollama validation, which can stay enabled in normal docker usage
+- smoke artifacts are written to `.artifacts/integration-smoke/` and uploaded by CI
 
 ## Capture One Host E2E (Local)
 
@@ -99,6 +100,34 @@ What it validates:
 - local runner executes host-mode compile job
 - job reaches `succeeded`
 - imported `.costyle` file exists on local filesystem
+
+Evidence:
+- host E2E artifacts are written to `.artifacts/host-captureone-e2e/`
+
+## Ollama Smoke (Local, Manual)
+
+Run the full smoke against your real local Ollama instance:
+
+```bash
+./scripts/integration_smoke_ollama.sh
+```
+
+Optional overrides:
+
+```bash
+STYLEAGENT_AI_MODEL=llama3.1:8b \
+STYLEAGENT_AI_BASE_URL=http://host.docker.internal:11434 \
+./scripts/integration_smoke_ollama.sh
+```
+
+What it validates:
+- the same browser/API happy path as the normal smoke
+- real provider health via `/ai/health`
+- preset generation through the configured Ollama model
+- saved/exported artifact path still completes end to end
+
+Evidence:
+- Ollama smoke artifacts are written to `.artifacts/integration-smoke-ollama/`
 
 ## Runner Host Integration Test (Local, One Command)
 

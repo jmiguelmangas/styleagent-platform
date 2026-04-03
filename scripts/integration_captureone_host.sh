@@ -3,6 +3,9 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_FILE="$ROOT_DIR/docker-compose.yml"
+ARTIFACTS_DIR="${HOST_E2E_ARTIFACTS_DIR:-$ROOT_DIR/.artifacts/host-captureone-e2e}"
+API_DIR="$ARTIFACTS_DIR/api"
+LOGS_DIR="$ARTIFACTS_DIR/logs"
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "docker is required"
@@ -25,9 +28,14 @@ if [[ ! -f "$RUNNER_VENV/bin/activate" ]]; then
 fi
 
 cleanup() {
+  mkdir -p "$LOGS_DIR"
+  docker compose -f "$COMPOSE_FILE" ps >"$LOGS_DIR/docker-compose-ps.txt" 2>&1 || true
+  docker compose -f "$COMPOSE_FILE" logs --no-color >"$LOGS_DIR/docker-compose.log" 2>&1 || true
   docker compose -f "$COMPOSE_FILE" down >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
+
+mkdir -p "$ARTIFACTS_DIR" "$API_DIR" "$LOGS_DIR"
 
 echo "Starting backend stack (mongodb + backend)..."
 docker compose -f "$COMPOSE_FILE" up -d mongodb backend
@@ -44,6 +52,7 @@ STYLE_NAME="CaptureOne Host E2E $(date +%s)"
 STYLE_RESPONSE="$(curl -fsS -X POST "http://localhost:8000/styles" \
   -H "Content-Type: application/json" \
   -d "{\"name\":\"$STYLE_NAME\"}")"
+printf '%s' "$STYLE_RESPONSE" >"$API_DIR/style-create.json"
 STYLE_ID="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["style_id"])' <<<"$STYLE_RESPONSE")"
 
 VERSION_PAYLOAD="$(cat <<EOF
@@ -65,11 +74,12 @@ EOF
 
 curl -fsS -X POST "http://localhost:8000/styles/$STYLE_ID/versions" \
   -H "Content-Type: application/json" \
-  -d "$VERSION_PAYLOAD" >/dev/null
+  -d "$VERSION_PAYLOAD" >"$API_DIR/style-version-create.json"
 
 JOB_RESPONSE="$(curl -fsS -X POST "http://localhost:8000/runner/jobs" \
   -H "Content-Type: application/json" \
   -d "{\"job_type\":\"compile_captureone\",\"payload\":{\"style_id\":\"$STYLE_ID\",\"version\":\"v1\",\"execution_mode\":\"host\"}}")"
+printf '%s' "$JOB_RESPONSE" >"$API_DIR/job-create.json"
 JOB_ID="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["job_id"])' <<<"$JOB_RESPONSE")"
 echo "Queued runner job: $JOB_ID"
 
@@ -88,6 +98,7 @@ FINAL_STATUS=""
 IMPORTED_PATH=""
 for _ in {1..60}; do
   JOB="$(curl -fsS "http://localhost:8000/runner/jobs/$JOB_ID")"
+  printf '%s' "$JOB" >"$API_DIR/job-status.json"
   FINAL_STATUS="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["status"])' <<<"$JOB")"
   if [[ "$FINAL_STATUS" == "succeeded" || "$FINAL_STATUS" == "failed" ]]; then
     IMPORTED_PATH="$(python3 -c 'import json,sys; j=json.load(sys.stdin); print(((j.get("result") or {}).get("host_integration") or {}).get("imported_costyle_path") or "")' <<<"$JOB")"
@@ -107,6 +118,7 @@ if [[ -z "$IMPORTED_PATH" || ! -f "$IMPORTED_PATH" ]]; then
   exit 1
 fi
 
+echo "$IMPORTED_PATH" >"$ARTIFACTS_DIR/imported-costyle-path.txt"
 echo "Host E2E passed."
 echo "style_id=$STYLE_ID"
 echo "job_id=$JOB_ID"
