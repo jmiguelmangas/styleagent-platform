@@ -40,6 +40,12 @@ cd ..
 ./scripts/integration_captureone_host.sh
 ```
 
+This writes evidence to:
+
+```bash
+.artifacts/host-captureone-e2e/
+```
+
 ## Required Preconditions
 
 - macOS host with Capture One installed
@@ -107,6 +113,7 @@ docker compose logs backend | rg "job_"
 - `./scripts/integration_runner_host_local.sh` passes
 - host job ends in `succeeded`
 - `result.host_integration.imported_costyle_path` exists on disk
+- `.artifacts/host-captureone-e2e/api/job-status.json` contains the final successful job payload
 
 ## GitHub Workflow Readiness
 
