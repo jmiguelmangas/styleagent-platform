@@ -171,5 +171,29 @@ RUNNER_LIST_RESPONSE="$(curl -fsS "http://localhost:8000/runner/jobs?status=pend
 printf '%s' "$RUNNER_LIST_RESPONSE" >"$API_DIR/runner-jobs.json"
 python3 -c 'import json,sys; jobs=json.load(sys.stdin); assert isinstance(jobs, list)' <<<"$RUNNER_LIST_RESPONSE"
 
+cat >"$ARTIFACTS_DIR/SUMMARY.md" <<EOF
+# Integration Smoke Summary
+
+- timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+- ai_provider: ${STYLEAGENT_AI_PROVIDER}
+- ai_model: ${STYLEAGENT_AI_MODEL}
+- style_id: ${STYLE_ID}
+- artifact_id: ${ARTIFACT_ID}
+- download_url: ${DOWNLOAD_URL}
+
+## Evidence
+
+- backend health: \`api/backend-health.json\`
+- ai health: \`api/ai-health.json\`
+- style create: \`api/style-create.json\`
+- style version create: \`api/style-version-create.json\`
+- compile response: \`api/compile-response.json\`
+- runner jobs: \`api/runner-jobs.json\`
+- downloaded costyle: \`downloads/${STYLE_ID}-v1.costyle\`
+- compose logs: \`logs/docker-compose.log\`
+- compose ps: \`logs/docker-compose-ps.txt\`
+- playwright results: \`playwright/test-results/\`
+EOF
+
 echo "$ARTIFACTS_DIR" >"$ARTIFACTS_DIR/ARTIFACTS_DIR.txt"
 echo "Integration smoke passed."
