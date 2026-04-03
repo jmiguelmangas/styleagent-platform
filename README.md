@@ -73,9 +73,17 @@ This same smoke test runs in GitHub Actions on every pull request and push to `m
 
 What it validates:
 - backend and frontend are reachable
+- AI health is available
+- a real browser completes the main guided journey with Playwright
+- prompt generation works against the running backend
+- preset save and `.costyle` export work through the UI
 - create style and version via backend API
 - compile Capture One artifact and download it
 - runner jobs endpoint is reachable
+
+Notes:
+- the smoke test forces `STYLEAGENT_AI_PROVIDER=mock` so CI and local smoke runs stay deterministic
+- this is separate from manual/local Ollama validation, which can stay enabled in normal docker usage
 
 ## Capture One Host E2E (Local)
 
