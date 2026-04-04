@@ -253,6 +253,30 @@ def render_markdown_report(output_dir: Path, summaries: list[dict]) -> None:
     (output_dir / "REPORT.md").write_text("\n".join(lines) + "\n")
 
 
+def evaluate_gates(
+    summaries: list[dict],
+    *,
+    require_full_exports: bool,
+    min_richness_keys: int,
+    require_intensity_monotonic_core: bool,
+) -> list[str]:
+    failures: list[str] = []
+    for summary in summaries:
+        for result in summary["results"]:
+            metrics = result["metrics"]
+            family = result["family"]
+            suite = summary["suite"]
+            if require_full_exports and not metrics["all_exports_full"]:
+                failures.append(f"[{suite}] {family}: exported artifact is missing required keys")
+            if metrics["avg_richness_keys"] < min_richness_keys:
+                failures.append(
+                    f"[{suite}] {family}: avg_richness_keys={metrics['avg_richness_keys']} < {min_richness_keys}"
+                )
+            if require_intensity_monotonic_core and not metrics["intensity_monotonic_core"]:
+                failures.append(f"[{suite}] {family}: intensity_monotonic_core is false")
+    return failures
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run the StyleAgent preset benchmark suites.")
     parser.add_argument(
@@ -269,6 +293,17 @@ def main() -> int:
         ),
         help="Directory where benchmark outputs will be written.",
     )
+    parser.add_argument(
+        "--enforce-gates",
+        action="store_true",
+        help="Fail with a non-zero exit code when benchmark gates are not met.",
+    )
+    parser.add_argument(
+        "--min-richness-keys",
+        type=int,
+        default=len(WATCH_KEYS),
+        help="Minimum average number of tracked keys required per family.",
+    )
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
@@ -278,6 +313,21 @@ def main() -> int:
     selected_suites = ("canon", "stress") if args.suite == "full" else (args.suite,)
     summaries = [run_suite(name, SUITES[name], output_dir) for name in selected_suites]
     render_markdown_report(output_dir, summaries)
+    failures = evaluate_gates(
+        summaries,
+        require_full_exports=True,
+        min_richness_keys=args.min_richness_keys,
+        require_intensity_monotonic_core=True,
+    )
+    (output_dir / "gate-results.json").write_text(
+        json.dumps({"passed": not failures, "failures": failures}, indent=2)
+    )
+    if failures:
+        print("Benchmark gate failures:")
+        for failure in failures:
+            print(f"- {failure}")
+        if args.enforce_gates:
+            return 1
     print(output_dir)
     return 0
 
