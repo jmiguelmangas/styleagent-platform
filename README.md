@@ -101,6 +101,30 @@ Notes:
 - this is separate from manual/local Ollama validation, which can stay enabled in normal docker usage
 - smoke artifacts are written to `.artifacts/integration-smoke/` and uploaded by CI
 
+## Benchmark Gates
+
+Run the canonical benchmark gates against the deterministic mock provider:
+
+```bash
+./scripts/integration_benchmark_gate.sh
+```
+
+Shortcut:
+
+```bash
+make benchmark-gate
+```
+
+What it validates:
+- backend and Mongo boot cleanly in Docker
+- the canon prompt families still export full `.costyle` artifacts
+- each canon family keeps all tracked Capture One keys
+- `subtle -> balanced -> bold` stays monotonic for the core intensity metrics
+
+Evidence:
+- benchmark gate artifacts are written to `.artifacts/benchmark-gate/`
+- CI uploads the same artifact bundle on every pull request and push to `main`
+
 ## Capture One Host E2E (Local)
 
 Run a local host-mode E2E check for Capture One integration:

@@ -1,0 +1,29 @@
+name: Benchmark Gates
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  benchmark-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run canonical benchmark gates
+        run: ./scripts/integration_benchmark_gate.sh
+
+      - name: Upload benchmark artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-gate-artifacts
+          path: .artifacts/benchmark-gate
+          if-no-files-found: warn
