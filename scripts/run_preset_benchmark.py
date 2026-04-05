@@ -46,11 +46,11 @@ SUITES: dict[str, list[tuple[str, str]]] = {
         ("pastel_maternity", "pastel maternity portrait with milky tones, luminous skin and gentle blush warmth"),
         ("snowy_architecture", "minimal winter architecture scene with clean whites, cold steel and soft blue daylight"),
         ("food_firelight", "restaurant food photo with firelit warmth, glossy sauce and rich charred texture"),
+        ("rainy_urban_night", "rainy urban night portrait with damp streets, cool atmosphere and soft neon spill"),
+        ("deep_monochrome", "deep monochrome portrait with dramatic matte blacks and sculpted tonal contrast"),
     ],
     "expansion": [
         ("moody_woodland", "moody woodland portrait with moonlit pines, ember warmth and shadowed trails"),
-        ("rainy_urban_night", "rainy urban night portrait with damp streets, cool atmosphere and soft neon spill"),
-        ("deep_monochrome", "deep monochrome portrait with dramatic matte blacks and sculpted tonal contrast"),
         ("soft_airy_portrait", "soft airy portrait with luminous skin, delicate pastel softness and lifted blacks"),
         ("soft_film_matte", "soft film matte portrait with nostalgic color, gentle contrast and lifted shadows"),
         ("editorial_teal_orange", "editorial portrait with strong teal and orange separation, polished contrast and clean texture"),

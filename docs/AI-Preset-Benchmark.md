@@ -183,13 +183,15 @@ Use the expansion suite for newer families that are backed by curated preset pac
 
 Current expansion families:
 - moody woodland
-- rainy urban night
-- deep monochrome
 - soft airy portrait
 - soft film matte
 - editorial teal-orange
 - emotive matte
 - muted urban soft
+
+Promoted into `stress` after calibration:
+- rainy urban night
+- deep monochrome
 
 Recommended command:
 
