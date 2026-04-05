@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 COMPOSE_PROJECT := styleagent-platform
 
-.PHONY: help bootstrap up down restart ps logs backend-logs frontend-logs runner-logs smoke smoke-ollama benchmark-gate host-e2e runner-host-local build wait-down
+.PHONY: help bootstrap up down restart ps logs backend-logs frontend-logs runner-logs smoke smoke-ollama benchmark-gate force-test host-e2e runner-host-local build wait-down
 
 help:
 	@echo "StyleAgent platform commands"
@@ -19,6 +19,7 @@ help:
 	@echo "  make smoke             Run deterministic full-stack smoke test"
 	@echo "  make smoke-ollama      Run full-stack smoke test against local Ollama"
 	@echo "  make benchmark-gate    Run canonical benchmark gates against mock provider"
+	@echo "  make force-test        Run the 100-prompt real-user force test against local Ollama"
 	@echo "  make host-e2e          Run local Capture One host E2E"
 	@echo "  make runner-host-local Run runner host integration pytest wrapper"
 
@@ -61,6 +62,9 @@ smoke-ollama:
 
 benchmark-gate:
 	./scripts/integration_benchmark_gate.sh
+
+force-test:
+	python3 ./scripts/run_user_prompt_force_test.py --output-dir ./.artifacts/user-force/pass-$$(date +%Y-%m-%d-%H%M%S)
 
 host-e2e:
 	./scripts/integration_captureone_host.sh

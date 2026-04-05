@@ -18,6 +18,7 @@ Current benchmark covers:
 - `subtle` / `balanced` / `bold` intensity behavior
 - save + export path to `.costyle`
 - qualitative review of creative direction
+- natural-language robustness through the 100-prompt user force test
 
 Current benchmark does not yet cover:
 - rendered image comparison
@@ -47,6 +48,23 @@ curl -X POST http://localhost:8000/ai/debug/prompt-preview \
   -d '{"prompt":"cinematic portrait with cool teal shadows","intent":["cinematic","portrait"]}'
 ```
 
+For broad natural-language validation against user-style prompts:
+
+```bash
+make force-test
+```
+
+This writes a run under:
+
+```bash
+/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/
+```
+
+Each run contains:
+- `summary.json`
+- `REPORT.md`
+- one JSON file per case under `cases/`
+
 For each benchmark prompt:
 1. Generate with `subtle`
 2. Generate with `balanced`
@@ -56,6 +74,54 @@ For each benchmark prompt:
 6. Review the generated `style_spec`
 7. Review whether the exported `.costyle` still contains the expected keys
 8. Score using the rubric below
+
+## User Force Test
+
+The force test complements `canon`, `stress`, and `expansion`.
+
+Purpose:
+- simulate the way a real user actually asks for looks
+- catch planner drift on short prompts, mixed descriptors, and Spanish phrasing
+- validate that intensity words in the prompt are interpreted correctly
+
+Current force-test suite:
+- `100` prompts
+- `20` creative families
+- `5` phrasing variants per family:
+  - plain English
+  - `Make it subtle`
+  - `Make it bold`
+  - plain Spanish
+  - `Keep it natural`
+
+Tracked checks:
+- expected family match
+- expected intensity when the prompt explicitly asks for one
+- no fallback
+- all tracked Capture One keys present
+- family-specific numeric signature still looks plausible
+
+Validated progression:
+- baseline:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05/summary.json`
+  - `66%`
+- first planner hardening:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05b/summary.json`
+  - `80%`
+- second planner pass:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05c/summary.json`
+  - `89%`
+- current validated baseline:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05d/summary.json`
+  - `100%`
+
+Use this suite when:
+- you change family matching
+- you change intensity interpretation
+- you add new prompt aliases or multilingual normalization
+
+Use `canon/stress/expansion` when:
+- you are calibrating artistic quality and monotonicity more than raw prompt robustness
 
 ## Scoring Rubric
 
