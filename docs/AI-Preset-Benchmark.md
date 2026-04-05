@@ -177,6 +177,31 @@ Keep the benchmark balanced across these families:
 
 If a future change improves one family but damages another, it should be treated as a regression.
 
+## Expansion Suite
+
+Use the expansion suite for newer families that are backed by curated preset packs but are not part of the CI gate yet.
+
+Current expansion families:
+- moody woodland
+- rainy urban night
+- deep monochrome
+- soft airy portrait
+- soft film matte
+- editorial teal-orange
+- emotive matte
+- muted urban soft
+
+Recommended command:
+
+```bash
+python3 /Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/scripts/run_preset_benchmark.py --suite expansion --output-dir /Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/benchmark/expansion-pass-$(date +%Y-%m-%d)
+```
+
+Use `--suite all` when you want one combined run with:
+- `canon`
+- `stress`
+- `expansion`
+
 ## Expected Signals Per Family
 
 ### Cinematic portrait

@@ -47,6 +47,16 @@ SUITES: dict[str, list[tuple[str, str]]] = {
         ("snowy_architecture", "minimal winter architecture scene with clean whites, cold steel and soft blue daylight"),
         ("food_firelight", "restaurant food photo with firelit warmth, glossy sauce and rich charred texture"),
     ],
+    "expansion": [
+        ("moody_woodland", "moody woodland portrait with moonlit pines, ember warmth and shadowed trails"),
+        ("rainy_urban_night", "rainy urban night portrait with damp streets, cool atmosphere and soft neon spill"),
+        ("deep_monochrome", "deep monochrome portrait with dramatic matte blacks and sculpted tonal contrast"),
+        ("soft_airy_portrait", "soft airy portrait with luminous skin, delicate pastel softness and lifted blacks"),
+        ("soft_film_matte", "soft film matte portrait with nostalgic color, gentle contrast and lifted shadows"),
+        ("editorial_teal_orange", "editorial portrait with strong teal and orange separation, polished contrast and clean texture"),
+        ("emotive_matte", "emotive matte portrait with washed contrast, soft color and nostalgic softness"),
+        ("muted_urban_soft", "muted urban portrait with low contrast, compressed highlights and rainy city softness"),
+    ],
 }
 
 
@@ -281,7 +291,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run the StyleAgent preset benchmark suites.")
     parser.add_argument(
         "--suite",
-        choices=("canon", "stress", "full"),
+        choices=("canon", "stress", "expansion", "full", "all"),
         default="full",
         help="Benchmark suite to run.",
     )
@@ -310,7 +320,12 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     wait_for_health()
-    selected_suites = ("canon", "stress") if args.suite == "full" else (args.suite,)
+    if args.suite == "full":
+        selected_suites = ("canon", "stress")
+    elif args.suite == "all":
+        selected_suites = ("canon", "stress", "expansion")
+    else:
+        selected_suites = (args.suite,)
     summaries = [run_suite(name, SUITES[name], output_dir) for name in selected_suites]
     render_markdown_report(output_dir, summaries)
     failures = evaluate_gates(
