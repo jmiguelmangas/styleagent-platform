@@ -125,6 +125,37 @@ Evidence:
 - benchmark gate artifacts are written to `.artifacts/benchmark-gate/`
 - CI uploads the same artifact bundle on every pull request and push to `main`
 
+## User Prompt Force Test
+
+Run the 100-prompt force test against the live local stack and your current Ollama model:
+
+```bash
+make force-test
+```
+
+What it validates:
+- natural user wording, not only benchmark prompts
+- family selection from vague, short, mixed, and Spanish phrasing
+- `subtle / balanced / bold` interpretation from prompt language
+- full rich preset generation across the tracked Capture One keys
+
+Artifacts:
+- results are written to `.artifacts/user-force/<timestamp>/`
+- each run contains:
+  - `summary.json`
+  - `REPORT.md`
+  - per-case JSON under `cases/`
+
+Current validated progression for the live force test:
+- `66%` baseline:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05/summary.json`
+- `80%` after first planner pass:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05b/summary.json`
+- `89%` after second planner pass:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05c/summary.json`
+- `100%` final validation:
+  - `/Users/josemiguelmangas/PROGRAMACION/styleagent/styleagent-platform/.artifacts/user-force/pass-2026-04-05d/summary.json`
+
 ## Capture One Host E2E (Local)
 
 Run a local host-mode E2E check for Capture One integration:
